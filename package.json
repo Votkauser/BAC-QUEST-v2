@@ -3,14 +3,27 @@
   "version": "3.0.0",
   "description": "BAC QUEST study planner",
   "author": "Ayoub_Elkounchi",
+  "homepage": "https://github.com/Votkauser/BAC-QUEST-v2",
   "main": "main.js",
-  "scripts": { "start": "electron .", "dist": "electron-builder --win nsis --x64 --publish never" },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis --x64 --publish never",
+    "dist-linux-appimage": "electron-builder --linux AppImage --x64 --publish never",
+    "dist-linux-rpm": "electron-builder --linux rpm --x64 --publish never"
+  },
   "devDependencies": { "electron": "33.2.1", "electron-builder": "25.1.8" },
   "build": {
     "appId": "com.ayoub.bacquest",
     "productName": "BAC QUEST",
     "files": ["main.js", "app/**/*"],
     "win": { "target": "nsis", "icon": "build/icon.png" },
-    "nsis": { "oneClick": true, "perMachine": false, "createDesktopShortcut": true, "createStartMenuShortcut": true }
+    "nsis": { "oneClick": true, "perMachine": false, "createDesktopShortcut": true, "createStartMenuShortcut": true },
+    "linux": {
+      "icon": "build/icon.png",
+      "category": "Education",
+      "executableName": "bac-quest",
+      "maintainer": "Ayoub_Elkounchi",
+      "synopsis": "BAC QUEST study planner"
+    }
   }
 }
