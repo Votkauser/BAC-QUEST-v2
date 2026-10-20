@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0c11">
+  <meta name="description" content="BAC QUEST: a private, offline study planner for the 2BAC national exam.">
+  <!-- Privacy lock: the page may only load files from itself. No outside servers, ever. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>BAC QUEST</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">BQ</div>
+        <div><div class="brand-name">BAC QUEST</div><div class="brand-sub">Your road to 18/20</div><div class="brand-sub">by Ayoub_Elkounchi</div></div>
+      </div>
+      <nav class="nav" aria-label="Main navigation">
+        <button class="nav-btn active" data-view="today"><span class="nav-ico" aria-hidden="true">◷</span>Today</button>
+        <button class="nav-btn" data-view="week"><span class="nav-ico" aria-hidden="true">▦</span>Weekly plan</button>
+        <button class="nav-btn" data-view="stats"><span class="nav-ico" aria-hidden="true">↗</span>Progress</button>
+        <button class="nav-btn" data-view="settings"><span class="nav-ico" aria-hidden="true">⚙</span>Settings &amp; data</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="goal-mini">
+          <div class="goal-label">Target grade</div>
+          <div class="goal-score"><span id="goalGrade">18</span><small>/20</small></div>
+          <div id="goalCountdown" class="goal-caption">2BAC national exam</div>
+          <div class="goal-line"><i id="goalBar"></i></div>
+          <div id="goalAvg" class="goal-caption">No scores logged yet</div>
+        </div>
+        <p class="privacy-note">Private by design: your data stays on this computer. Nothing is sent anywhere.</p>
+        <p class="privacy-note">Ayoub_Elkounchi's personal study space</p>
+      </div>
+    </aside>
+
+    <main id="main" class="main-content" tabindex="-1">
+      <header class="topbar">
+        <h1 id="pageTitle">Today</h1>
+        <div class="top-actions">
+          <button id="saveChip" class="save-chip" type="button" title="Open Settings &amp; data"><i class="dot" aria-hidden="true"></i><span id="saveStatus">Loading…</span></button>
+          <button id="notifyBtn" class="btn btn-quiet" type="button" title="Turn study reminders on or off"><span aria-hidden="true">♧</span><span class="btn-text">Reminders</span></button>
+          <button id="exportBtn" class="btn btn-quiet" type="button" title="Download a backup file of your plan and progress"><span aria-hidden="true">⇩</span><span class="btn-text">Backup</span></button>
+          <button id="importBtn" class="btn btn-quiet" type="button" title="Restore from a BAC QUEST backup file"><span aria-hidden="true">⇧</span><span class="btn-text">Restore</span></button>
+          <input id="importFile" type="file" accept="application/json,.json" hidden>
+        </div>
+      </header>
+
+      <div id="banners" class="banners" aria-live="polite"></div>
+
+      <section id="todayView" class="view-section" aria-labelledby="pageTitle"></section>
+      <section id="weekView" class="view-section hidden" aria-labelledby="pageTitle"></section>
+      <section id="statsView" class="view-section hidden" aria-labelledby="pageTitle"></section>
+      <section id="settingsView" class="view-section hidden" aria-labelledby="pageTitle"></section>
+
+      <footer class="app-footer"><span id="versionLabel">BAC QUEST</span><span>Works offline · No accounts · No tracking</span><span>Made for Ayoub_Elkounchi</span></footer>
+    </main>
+  </div>
+
+  <dialog id="taskDialog" class="dialog" aria-labelledby="taskDialogTitle">
+    <form id="taskForm" method="dialog" novalidate>
+      <div class="dialog-head"><h2 id="taskDialogTitle">Add a mission</h2><button type="button" id="closeTask" class="icon-btn" aria-label="Close">×</button></div>
+      <label class="field">Mission name<input id="taskName" type="text" maxlength="90" autocomplete="off" placeholder="e.g. Solve derivative exercises"></label>
+      <div class="form-row">
+        <label class="field">Subject<select id="taskSubject"></select></label>
+        <fieldset class="field seg" id="repeatSeg"><legend>Repeats</legend>
+          <label><input type="radio" name="repeat" value="weekly" checked><span>Every week</span></label>
+          <label><input type="radio" name="repeat" value="once"><span>Once</span></label>
+        </fieldset>
+      </div>
+      <div class="form-row">
+        <label class="field" id="dayField">Day<select id="taskDay"></select></label>
+        <label class="field hidden" id="dateField">Date<input id="taskDate" type="date"></label>
+        <label class="field">Start time<input id="taskStart" type="time" value="17:00"></label>
+      </div>
+      <div class="field">
+        <label for="taskDuration">Duration (minutes)</label>
+        <div class="dur-row"><input id="taskDuration" type="number" min="5" max="600" step="5" value="60"><div id="durChips" class="chips"></div></div>
+        <div id="taskEnds" class="hint"></div>
+      </div>
+      <div id="taskWarn" class="warn-box hidden" role="alert"></div>
+      <div id="taskErrors" class="error-box hidden" role="alert"></div>
+      <div class="dialog-actions"><button type="button" id="cancelTask" class="btn btn-quiet">Cancel</button><button type="submit" id="saveTask" class="btn btn-primary">Save mission</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="confirmDialog" class="dialog dialog-narrow" aria-labelledby="confirmTitle">
+    <form method="dialog">
+      <div class="dialog-head"><h2 id="confirmTitle">Are you sure?</h2></div>
+      <div id="confirmBody" class="confirm-body"></div>
+      <div class="dialog-actions"><button type="button" id="confirmNo" class="btn btn-quiet">Cancel</button><button type="button" id="confirmYes" class="btn btn-primary">Confirm</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <div id="fx" class="fx" aria-hidden="true"></div>
+
+  <script src="core.js"></script>
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
