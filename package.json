@@ -4,7 +4,7 @@
   "description": "BAC QUEST study planner",
   "author": "Ayoub_Elkounchi",
   "main": "main.js",
-  "scripts": { "start": "electron .", "dist": "electron-builder --win nsis --x64" },
+  "scripts": { "start": "electron .", "dist": "electron-builder --win nsis --x64 --publish never" },
   "devDependencies": { "electron": "33.2.1", "electron-builder": "25.1.8" },
   "build": {
     "appId": "com.ayoub.bacquest",
